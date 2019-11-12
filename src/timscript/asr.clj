@@ -53,7 +53,7 @@
 (defrecord Id [bound-name] ME)
 (defrecord IdNum [bound-name value] ME)
 (defrecord Note [note-id vol dur] ME)
-(defrecord Rest [value] ME)
+(defrecord Rest [dur] ME)
 (defrecord Chord [notes] ME)
 (defrecord Sequence [beat rest-beats] ME)
 (defrecord Name [bound-id bound-me] ME)

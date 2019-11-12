@@ -11,14 +11,19 @@
   "Produces an Musical Expression (ME) from a list of arguments"
   [args]
   (match [args]
-    [[Note (note-id :guard symbol?)
+    [([Note (note-id :guard symbol?)
            (vol :guard number?)
-           (dur :guard number?)]]
+           (dur :guard number?)] :seq)]
      (Note. note-id vol dur)
-    [[Rest (value :guard number?)]] (Rest. value)
-    :else (println "Unable to parse expression")))
+    [([Rest (dur :guard number?)] :seq)] (Rest. dur)
+    [([Note (note-id :guard symbol?)
+           (vol :guard number?)
+           (dur :guard number?) & r] :seq)]
+    (Sequence. (Note. note-id vol dur) (parse r))
+    [([Rest (dur :guard number?) & r] :seq)] (Sequence. (Rest. dur) (parse r))
+    :else (println "Unable to parse expression" args)))
 
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  (parse (read-string (str "[" (first args) "]"))))
+  (parse (read-string (str "(" (first args) ")"))))
