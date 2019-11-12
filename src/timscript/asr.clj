@@ -1,5 +1,4 @@
-(ns timscript.asr
-  (:gen-class))
+(ns timscript.asr)
 
 ;; Concrete Language Syntax (EBNF) from 4.1
 ;;
