@@ -13,7 +13,7 @@
 ;;        | <andSequences>
 ;;        | <thenSequences>
 ;;        | split <num> <num> <Sequence>
-;;        | keyChange <KeySignature> on <Sequence>
+;;        | keyChange <Sequence> to <KeySignature>
 ;;        | replace (<ReplaceValues>) in <Sequence>
 ;;        | reverse <Sequence>
 ;;
