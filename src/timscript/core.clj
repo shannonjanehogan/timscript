@@ -51,11 +51,22 @@
 
 (defn interp
   "Interpret the mexpr, producing the final mexpr"
-  [mexpr]
+  [mexpr env]
   (cond
-    (instance? Note mexpr) (println "A note!")))
+    (instance? Note mexpr) (println "TODO!")
+    (instance? Rest mexpr) (println "TODO!")
+    (instance? Glue mexpr) (println "TODO!")
+    (instance? Chord mexpr) (println "TODO!")
+    (instance? Reverse mexpr) (println "TODO!")
+    (instance? Transpose mexpr) (println "TODO!")
+    (instance? Loop mexpr) (println "TODO!")
+    (instance? Split mexpr) (println "TODO!")
+    (instance? Name mexpr) (println "TODO!")
+    (instance? Id mexpr) (println "TODO!")
+    (instance? IdNum mexpr) (println "TODO!")
+    :else (println "TODO!")))
 
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  (interp (parse (read-string (str "(" (first args) ")")))))
+  (interp (parse (read-string (str "(" (first args) ")"))) []))
