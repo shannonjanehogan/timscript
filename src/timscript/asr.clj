@@ -6,8 +6,8 @@
 ;;        | <id>
 ;;        | <id>[<num>]
 ;;        | <Beat>
-;;        | <Sequence>
-;;        | <id> = <ME>
+;;        | (<Sequence>)
+;;        | let <id> = <ME>
 ;;        | transpose by <int> <ME>
 ;;        | loop <int> times <ME>
 ;;        | <andSequences>
@@ -31,7 +31,7 @@
 ;;
 ;; <Beat> ::= Note <Note>
 ;;          | Rest <num>
-;;          | Chord <Chord>
+;;          | Chord (<Chord>)
 ;;
 ;; <Note> ::= <NoteId> <num> <num>
 ;;
@@ -55,7 +55,7 @@
 (defrecord IdNum [bound-id value] ME)
 (defrecord Note [note-id vol dur] ME)
 (defrecord Rest [dur] ME)
-(defrecord Chord [notes] ME)
+(defrecord Chord [note rest-notes] ME)
 (defrecord Sequence [beat rest-beats] ME)
 (defrecord Name [bound-id bound-me] ME)
 (defrecord Transpose [dist me] ME)
