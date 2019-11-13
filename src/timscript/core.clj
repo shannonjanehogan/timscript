@@ -77,6 +77,28 @@
     (instance? Chord mexpr) (Chord. (transposeMexpr dist (:note mexpr))
                                     (transposeMexpr dist (:rest-notes mexpr)))))
 
+(defn loopMexpr [times mexpr]
+  "Repeats the ME times number of times"
+  (cond
+    (= 0 times) nil
+    (= 1 times) (if (instance? Sequence mexpr) mexpr (Sequence. mexpr nil))
+    (or (instance? Note mexpr)
+        (instance? Rest mexpr)
+        (instance? Chord mexpr))
+    (Sequence. mexpr (loopMexpr (- times 1) mexpr))
+    (instance? Sequence mexpr) (glueSeqs mexpr (loopMexpr (- times 1) mexpr))))
+
+(defn splitSeq [start end sequ]
+  "Removes the first <start> values and values after <end> from sequ"
+  (cond
+    (nil? sequ) sequ
+    (and (< start 0)
+         (< end 0)) sequ
+    (< start 0) (Sequence. (:beat sequ) (splitSeq start (dec end) (:rest-beats sequ)))
+    (< end 0) nil
+    :else (Sequence. (:beat (:rest-beats sequ))
+                     (splitSeq (dec start) (dec end) (:rest-beats (:rest-beats sequ))))))
+
 (defn interp
   "Interpret the mexpr, producing the final mexpr"
   [mexpr env]
@@ -89,8 +111,10 @@
     (instance? Reverse mexpr) (reverseSeq (:sequ mexpr))
     (instance? Transpose mexpr) (transposeMexpr (:value (:dist mexpr))
                                                 (interp (:me mexpr) env))
-    (instance? Loop mexpr) (println "TODO!")
-    (instance? Split mexpr) (println "TODO!")
+    (instance? Loop mexpr) (loopMexpr (:value (:times mexpr)) (interp (:me mexpr) env))
+    (instance? Split mexpr) (splitSeq (:value (:start mexpr))
+                                      (:value (:end mexpr))
+                                      (:sequ mexpr))
     (instance? Name mexpr) (println "TODO!")
     (instance? Id mexpr) (println "TODO!")
     (instance? IdNum mexpr) (println "TODO!")
