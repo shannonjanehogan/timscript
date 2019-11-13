@@ -10,7 +10,6 @@
 (defn parse
   "Produces an Musical Expression (ME) from a list of arguments"
   [args]
-  (println args)
   (if (some (partial = 'and) args)
       (let [split (split-with (partial not= 'and) args)
             [_ & afterAnd] (second split)]
@@ -50,7 +49,13 @@
         [([([] :seq)] :seq)] nil
         :else (println "Unable to parse expression" args))))
 
+(defn interp
+  "Interpret the mexpr, producing the final mexpr"
+  [mexpr]
+  (cond
+    (instance? Note mexpr) (println "A note!")))
+
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  (println (parse (read-string (str "(" (first args) ")")))))
+  (interp (parse (read-string (str "(" (first args) ")")))))
