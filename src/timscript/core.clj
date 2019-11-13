@@ -7,6 +7,9 @@
             ReplaceValue])
   (:gen-class))
 
+(def noteSeq
+  ['a 'as 'b 'c 'cs 'd 'ds 'e 'f 'fs 'g 'gs])
+
 (defn parse
   "Produces an Musical Expression (ME) from a list of arguments"
   [args]
@@ -49,24 +52,51 @@
         [([([] :seq)] :seq)] nil
         :else (println "Unable to parse expression" args))))
 
+(defn glueSeqs [seq1 seq2]
+  "Combines two Sequences into one"
+  (cond
+    (nil? seq1) seq2
+    :else (Sequence. (:beat seq1) (glueSeqs (:rest-beats seq1) seq2))))
+
+(defn reverseSeq [sequ]
+  "Reverses a Sequence"
+  (cond
+    (nil? sequ) sequ
+    :else
+    (glueSeqs (reverseSeq (:rest-beats sequ)) (Sequence. (:beat sequ) nil))))
+
+(defn transposeMexpr [dist mexpr]
+  "Moves the notes of mexpr in direction and distance of dist"
+  (cond
+    (instance? Note mexpr)
+    (let [index (mod (+ dist (.indexOf noteSeq (:note-id mexpr))) (count noteSeq))]
+      (Note. (get noteSeq index) (:vol mexpr) (:dur mexpr)))
+    (instance? Rest mexpr) mexpr
+    (instance? Sequence mexpr) (Sequence. (transposeMexpr dist (:beat mexpr))
+                                          (transposeMexpr dist (:rest-beats mexpr)))
+    (instance? Chord mexpr) (Chord. (transposeMexpr dist (:note mexpr))
+                                    (transposeMexpr dist (:rest-notes mexpr)))))
+
 (defn interp
   "Interpret the mexpr, producing the final mexpr"
   [mexpr env]
   (cond
-    (instance? Note mexpr) (println "TODO!")
-    (instance? Rest mexpr) (println "TODO!")
-    (instance? Glue mexpr) (println "TODO!")
-    (instance? Chord mexpr) (println "TODO!")
-    (instance? Reverse mexpr) (println "TODO!")
-    (instance? Transpose mexpr) (println "TODO!")
+    (instance? Note mexpr) mexpr
+    (instance? Rest mexpr) mexpr
+    (instance? Glue mexpr) (glueSeqs (:sequ mexpr) (:rest-seqs mexpr))
+    (instance? Chord mexpr) mexpr
+    (instance? Sequence mexpr) mexpr
+    (instance? Reverse mexpr) (reverseSeq (:sequ mexpr))
+    (instance? Transpose mexpr) (transposeMexpr (:value (:dist mexpr))
+                                                (interp (:me mexpr) env))
     (instance? Loop mexpr) (println "TODO!")
     (instance? Split mexpr) (println "TODO!")
     (instance? Name mexpr) (println "TODO!")
     (instance? Id mexpr) (println "TODO!")
     (instance? IdNum mexpr) (println "TODO!")
-    :else (println "TODO!")))
+    :else (println "TODO!" mexpr)))
 
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  (interp (parse (read-string (str "(" (first args) ")"))) []))
+  (println (interp (parse (read-string (str "(" (first args) ")"))) [])))
