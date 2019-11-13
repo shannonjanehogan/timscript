@@ -8,12 +8,12 @@
 ;;        | <Beat>
 ;;        | <Sequence>
 ;;        | <id> = <ME>
-;;        | transpose <ME> by <int>
-;;        | loop <ME> <int> times
+;;        | transpose by <int> <ME>
+;;        | loop <int> times <ME>
 ;;        | <andSequences>
 ;;        | <thenSequences>
-;;        | split <Sequence> <num> <num>
-;;        | keyChange <Sequence> to <KeySignature>
+;;        | split <num> <num> <Sequence>
+;;        | keyChange <KeySignature> on <Sequence>
 ;;        | replace (<ReplaceValues>) in <Sequence>
 ;;        | reverse <Sequence>
 ;;
@@ -58,11 +58,11 @@
 (defrecord Chord [notes] ME)
 (defrecord Sequence [beat rest-beats] ME)
 (defrecord Name [bound-id bound-me] ME)
-(defrecord Transpose [me distance] ME)
-(defrecord Loop [me times] ME)
+(defrecord Transpose [dist me] ME)
+(defrecord Loop [times me] ME)
 (defrecord AndSeq [sequ rest-seqs] ME)
-(defrecord ThenSeq [sequ rest-seqs] ME)
-(defrecord Split [sequ start end] ME)
+(defrecord Glue [sequ rest-seqs] ME)
+(defrecord Split [start end sequ] ME)
 (defrecord KeyChange [sequ ks] ME)
 (defrecord Replace [repVals sequ] ME)
 (defrecord Reverse [sequ] ME)
